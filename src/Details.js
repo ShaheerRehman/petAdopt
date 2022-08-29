@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 import { Component } from "react";
 import Carousel from "./Carousel";
 import ErrorBoundary from "./ErrorBoundary";
-import ThemeContext from "./ThemeContext";
 import Modal from "./Modal";
+import { useSelector } from "react-redux";
 
 class Details extends Component {
   // constructor(props) {
@@ -36,43 +36,33 @@ class Details extends Component {
           <h2>
             {animal} - {breed} - {city} - {state}
           </h2>
-          <ThemeContext.Consumer>
-            {([theme]) => (
-              <button
-                onClick={this.toggleModal}
-                style={{ backgroundColor: theme }}
-              >
-                Adopt {name}
-              </button>
-            )}
-          </ThemeContext.Consumer>
+          <button
+            onClick={this.toggleModal}
+            style={{ backgroundColor: this.props.theme }}
+          >
+            Adopt {name}
+          </button>
           <p>{description}</p>
           {showModal ? (
             <Modal>
               <div>
                 <h1>Would you like to adopt {name}?</h1>
                 <div className="buttons">
-                  <ThemeContext.Consumer>
-                    {([theme]) => (
-                      <>
-                        <a
-                          target="_blank"
-                          rel="noreferrer"
-                          href="https://bit.ly/pet-adopt"
-                          onClick={() => this.toggleModal()}
-                          style={{ backgroundColor: theme }}
-                        >
-                          Yes
-                        </a>
-                        <button
-                          onClick={() => this.toggleModal()}
-                          style={{ backgroundColor: theme }}
-                        >
-                          No
-                        </button>
-                      </>
-                    )}
-                  </ThemeContext.Consumer>
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://bit.ly/pet-adopt"
+                    onClick={() => this.toggleModal()}
+                    style={{ backgroundColor: this.props.theme }}
+                  >
+                    Yes
+                  </a>
+                  <button
+                    onClick={() => this.toggleModal()}
+                    style={{ backgroundColor: this.props.theme }}
+                  >
+                    No
+                  </button>
                 </div>
               </div>
             </Modal>
@@ -83,10 +73,11 @@ class Details extends Component {
   }
 }
 const WrappedDetails = () => {
+  const theme = useSelector(({ theme }) => theme.theme);
   const params = useParams();
   return (
     <ErrorBoundary>
-      <Details params={params} />;
+      <Details params={params} theme={theme} />;
     </ErrorBoundary>
   );
 };
